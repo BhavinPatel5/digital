@@ -6,7 +6,6 @@ import mongoose from 'mongoose';
 
 export async function DELETE(req) {
   try {
-    console.log('🗑️ /api/shop/delete called');
     await connectDB();
 
     const cookieStore =await cookies();
@@ -17,7 +16,6 @@ export async function DELETE(req) {
     if (!decoded) return Response.json({ error: 'Invalid token' }, { status: 401 });
 
     const { shopId } = await req.json();
-    console.log('📦 Deletion request for:', shopId);
 
     if (!mongoose.Types.ObjectId.isValid(shopId)) {
       return Response.json({ error: 'Invalid shop ID' }, { status: 400 });
@@ -36,11 +34,9 @@ export async function DELETE(req) {
     }
 
     await Shop.findByIdAndDelete(shop._id);
-    console.log('✅ Shop deleted:', shop._id);
 
     return Response.json({ success: true });
   } catch (err) {
-    console.error('❌ /api/shop/delete error:', err);
     return Response.json({ error: 'Failed to delete shop' }, { status: 500 });
   }
 }

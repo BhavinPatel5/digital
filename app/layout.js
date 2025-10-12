@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <ShopProvider> 
-            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+            <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
               <NotificationProvider>
                 <main className="main-content">
                   <ElementXLoader />

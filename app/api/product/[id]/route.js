@@ -18,7 +18,6 @@ export async function GET(_, { params }) {
 
     return Response.json({ product });
   } catch (err) {
-    console.error('❌ /api/product/[id] GET error:', err);
     return Response.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
 }
@@ -45,7 +44,6 @@ export async function PUT(req, { params }) {
 
     return Response.json({ success: true, product });
   } catch (err) {
-    console.error('❌ /api/product/[id] PUT error:', err);
     return Response.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -66,7 +64,6 @@ export async function DELETE(_, { params }) {
 
     return Response.json({ success: true });
   } catch (err) {
-    console.error('❌ /api/product/[id] DELETE error:', err);
     return Response.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }

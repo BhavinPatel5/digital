@@ -75,6 +75,9 @@ const callAuthApi = async (action, body) => {
       case 'login':
         endpoint = 'login';
         break;
+      case 'google':
+        endpoint = 'google';
+        break;
       case 'forgot-initiate':
         endpoint = 'forgot/initiate';
         break;
@@ -191,7 +194,6 @@ const handleLogin = async () => {
       });
     }
   } catch (error) {
-    console.error('Login error:', error);
   } finally {
     setLoading(prev => ({ ...prev, login: false }));
   }
@@ -366,7 +368,7 @@ const handleGoogleLogin = async (credentialResponse) => {
   }
 
   setLoading(prev => ({ ...prev, login: true }));
-  const response = await callAuthApi('oauth', {
+  const response = await callAuthApi('google', {
     provider: 'google',
     token
   });

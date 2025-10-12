@@ -26,7 +26,6 @@ export async function GET(req) {
 
     return Response.json({ products });
   } catch (err) {
-    console.error('❌ /api/product/list error:', err);
     return Response.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }

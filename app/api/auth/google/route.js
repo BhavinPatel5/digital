@@ -5,7 +5,7 @@ import { generateAccessToken, generateRefreshToken } from '@/utils/token';
 import { setRefreshCookie } from '@/utils/cookies';
 import { cookies } from 'next/headers';
 
-const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function POST(req) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req) {
 
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();

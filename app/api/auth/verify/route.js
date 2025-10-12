@@ -70,7 +70,6 @@ export async function POST(request) {
       }
     });
   } catch (error) {
-    console.error('Verification error:', error);
     return Response.json({ error: 'Verification failed' }, { status: 500 });
   }
 }

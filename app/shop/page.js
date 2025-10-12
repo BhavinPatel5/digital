@@ -160,7 +160,6 @@ export default function ShopHierarchyManager() {
     value: shop._id,
   }));
 
-  console.log('Selected Shop:', selectedShop);
 
   return (
     <div className="shop-manager">
@@ -176,7 +175,6 @@ export default function ShopHierarchyManager() {
   value={selectedShop || ''}
   onvalueChanged={(e) => {
     const shopId = e.detail.value;
-    console.log('Selected Shop ID:', shopId);
     setSelectedShop(shopId);
     const shop = nodes.find(n => n._id === shopId);
     if (shop) {

@@ -6,9 +6,7 @@ import mongoose from 'mongoose';
 
 export async function POST(req) {
   try {
-    console.log('✏️ /api/shop/edit called');
     await connectDB();
-    console.log('✅ Connected to DB');
 
     const cookieStore =await cookies();
     const token = cookieStore.get('accessToken')?.value;
@@ -18,7 +16,6 @@ export async function POST(req) {
     if (!decoded) return Response.json({ error: 'Invalid token' }, { status: 401 });
 
     const { shopId, name, address, description, contactEmail, domain, parent = null } = await req.json();
-    console.log('📦 Edit payload:', { shopId, parent });
 
     if (!mongoose.Types.ObjectId.isValid(shopId)) {
       return Response.json({ error: 'Invalid shop ID' }, { status: 400 });
@@ -59,11 +56,9 @@ export async function POST(req) {
     shop.parent = validParent;
 
     await shop.save();
-    console.log('✅ Shop updated:', shop._id);
 
     return Response.json({ success: true, shop });
   } catch (err) {
-    console.error('❌ /api/shop/edit error:', err);
     return Response.json({ error: 'Failed to update shop' }, { status: 500 });
   }
 }

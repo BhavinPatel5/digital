@@ -16,7 +16,6 @@ export function ShopProvider({ children }) {
         if (res.ok) setShops(json.shops || []);
         else setShops([]);
       } catch (err) {
-        console.error('Failed to load shops', err);
         setShops([]);
       }
     };

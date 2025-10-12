@@ -27,7 +27,6 @@ export async function GET() {
 
     return Response.json({ shops: normalized });
   } catch (err) {
-    console.error('❌ /api/shop/list error:', err);
     return Response.json({ error: 'Failed to fetch shops' }, { status: 500 });
   }
 }
