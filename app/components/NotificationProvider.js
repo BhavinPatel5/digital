@@ -15,40 +15,40 @@ let globalNotify = () => {};
 // Define preset styles
 const PRESET_STYLES = {
   info: {
-    background: 'var(--ex-info-g1)',
-    titleColor: 'var(--ex-info-primary-dark)',
-    messageColor: 'var(--ex-info-primary)',
+    background: 'var(--sky-info-g1)',
+    titleColor: 'var(--sky-info-primary-dark)',
+    messageColor: 'var(--sky-info-primary)',
   },
   success: {
-    background: 'var(--ex-success-g1)',
-    titleColor: 'var(--ex-success-primary-dark)',
-    messageColor: 'var(--ex-success-primary)',
+    background: 'var(--sky-success-g1)',
+    titleColor: 'var(--sky-success-primary-dark)',
+    messageColor: 'var(--sky-success-primary)',
   },
   warn: {
-    background: 'var(--ex-warning-g1)',
-    titleColor: 'var(--ex-warning-primary-dark)',
-    messageColor: 'var(--ex-warning-primary)',
+    background: 'var(--sky-warning-g1)',
+    titleColor: 'var(--sky-warning-primary-dark)',
+    messageColor: 'var(--sky-warning-primary)',
   },
   alert: {
-    background: 'var(--ex-danger-g1)',
-    titleColor: 'var(--ex-danger-primary-dark)',
-    messageColor: 'var(--ex-danger-primary)',
+    background: 'var(--sky-danger-g1)',
+    titleColor: 'var(--sky-danger-primary-dark)',
+    messageColor: 'var(--sky-danger-primary)',
   },
   active: {
-    background: 'var(--ex-active-g1)',
-    titleColor: 'var(--ex-active-primary-dark)',
-    messageColor: 'var(--ex-active-primary)',
+    background: 'var(--sky-active-g1)',
+    titleColor: 'var(--sky-active-primary-dark)',
+    messageColor: 'var(--sky-active-primary)',
   },
 };
 
 export function NotificationProvider({ children }) {
   const ref = useRef(null);
-  const [ExNotification, setExNotification] = useState(null);
+  const [SkyNotification, setSkyNotification] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      import('@bhavinpatel57/element-x').then((mod) => {
-        setExNotification(() => mod.ExNotification);
+      import('@sky-ui/react').then((mod) => {
+        setSkyNotification(() => mod.SkyNotification);
       });
     }
   }, []);
@@ -67,12 +67,12 @@ export function NotificationProvider({ children }) {
     };
   }, []);
 
-  if (!ExNotification) return null;
+  if (!SkyNotification) return null;
 
   return (
     <NotificationContext.Provider value={{ notify: globalNotify }}>
       {children}
-      <ExNotification ref={ref} position="top-center" mergeDuplicates        style={{ '--exc-border': 'none','--exc-box-shadow':'var(--ex-box-shadow-primary)' }} 
+      <SkyNotification ref={ref} position="top-center" mergeDuplicates  
         closeButton={false}/>
     </NotificationContext.Provider>
   );

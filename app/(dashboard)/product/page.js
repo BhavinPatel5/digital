@@ -1,12 +1,12 @@
 'use client';
 
 import {
-  ExInput,
-  ExForm,
-  ExButton,
-  ExDialog,
-  ExTable,
-} from '@bhavinpatel57/element-x';
+  SkyInput,
+  SkyForm,
+  SkyButton,
+  SkyDialog,
+  SkyTable,
+} from '@sky-ui/react';
 import { useShop } from '@/context/ShopContext';
 import { useEffect, useRef, useState } from 'react';
 import { notifyGlobal } from '../../components/NotificationProvider';
@@ -133,8 +133,8 @@ export default function ProductPage() {
       label: 'Actions',
       render: (row) => (
         <div className="actions">
-          <ExButton size="xs" variant="light" onClick={() => openDialog(row)}>✏️</ExButton>
-          <ExButton size="xs" variant="danger" onClick={() => handleDelete(row._id)}>🗑️</ExButton>
+          <SkyButton size="xs" variant="light" onClick={() => openDialog(row)}>✏️</SkyButton>
+          <SkyButton size="xs" variant="danger" onClick={() => handleDelete(row._id)}>🗑️</SkyButton>
         </div>
       )
     },
@@ -144,7 +144,7 @@ export default function ProductPage() {
     <div className="product-page">
       <div className="product-page__header">
         <h2>Products</h2>
-        <ExButton onClick={() => {
+        <SkyButton onClick={() => {
   if (!selectedShop) {
 notifyGlobal({
   type: 'warn',
@@ -156,25 +156,25 @@ notifyGlobal({
     return;
   }
   openDialog();
-}}>+ Add Product</ExButton>
+}}>+ Add Product</SkyButton>
       </div>
 
-      <ExTable columns={columns} data={products} />
+      <SkyTable columns={columns} data={products} />
 
-      <ExDialog ref={dialogRef} title={editingProduct ? 'Edit Product' : 'New Product'} closeButton>
-        <ExForm onformSubmit={handleSubmit} formId="productForm" slot="dialog-form">
-          <ExInput placeholder="Name" value={form.name} onvalueChanged={(e) => handleInput('name', e.detail.value)} />
-          <ExInput placeholder="SKU" value={form.sku} onvalueChanged={(e) => handleInput('sku', e.detail.value)} />
-          <ExInput placeholder="Price" type="number" value={form.price} onvalueChanged={(e) => handleInput('price', e.detail.value)} />
-          <ExInput placeholder="Stock" type="number" value={form.stock} onvalueChanged={(e) => handleInput('stock', e.detail.value)} />
-          <ExInput placeholder="Unit" value={form.unit} onvalueChanged={(e) => handleInput('unit', e.detail.value)} />
-          <ExInput placeholder="Tax Rate (%)" type="number" value={form.taxRate} onvalueChanged={(e) => handleInput('taxRate', e.detail.value)} />
-          <ExInput placeholder="Description" value={form.description} onvalueChanged={(e) => handleInput('description', e.detail.value)} />
-        </ExForm>
-        <ExButton formId="productForm" slot="custom-buttons">
+      <SkyDialog ref={dialogRef} title={editingProduct ? 'Edit Product' : 'New Product'} closeButton>
+        <SkyForm onformSubmit={handleSubmit} formId="productForm" slot="dialog-form">
+          <SkyInput placeholder="Name" value={form.name} onvalueChanged={(e) => handleInput('name', e.detail.value)} />
+          <SkyInput placeholder="SKU" value={form.sku} onvalueChanged={(e) => handleInput('sku', e.detail.value)} />
+          <SkyInput placeholder="Price" type="number" value={form.price} onvalueChanged={(e) => handleInput('price', e.detail.value)} />
+          <SkyInput placeholder="Stock" type="number" value={form.stock} onvalueChanged={(e) => handleInput('stock', e.detail.value)} />
+          <SkyInput placeholder="Unit" value={form.unit} onvalueChanged={(e) => handleInput('unit', e.detail.value)} />
+          <SkyInput placeholder="Tax Rate (%)" type="number" value={form.taxRate} onvalueChanged={(e) => handleInput('taxRate', e.detail.value)} />
+          <SkyInput placeholder="Description" value={form.description} onvalueChanged={(e) => handleInput('description', e.detail.value)} />
+        </SkyForm>
+        <SkyButton formId="productForm" slot="custom-buttons">
           {editingProduct ? 'Update' : 'Create'}
-        </ExButton>
-      </ExDialog>
+        </SkyButton>
+      </SkyDialog>
     </div>
   );
 }

@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useRef } from 'react';
 import {
-  ExInput,
-  ExForm,
-  ExButton,
-  ExDialog,
-  ExCombobox,
-} from '@bhavinpatel57/element-x';
+  SkyInput,
+  SkyForm,
+  SkyButton,
+  SkyDialog,
+  SkyCombobox,
+} from '@sky-ui/react';
 import { notifyGlobal } from '../components/NotificationProvider';
 import { useAuth } from '@/context/AuthContext';
 import { useShop } from '@/context/ShopContext';
@@ -133,8 +133,8 @@ export default function ShopHierarchyManager() {
         <div className="flex justify-between items-center">
           <strong>{node.name}</strong>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-            <ExButton size="xs" variant="light" onClick={() => openEditNode(node)} title="Edit">✏️</ExButton>
-            <ExButton
+            <SkyButton size="xs" variant="light" onClick={() => openEditNode(node)} title="Edit">✏️</SkyButton>
+            <SkyButton
               size="xs"
               variant="danger"
               onClick={() =>
@@ -146,7 +146,7 @@ export default function ShopHierarchyManager() {
               title={hasChildren ? 'Cannot delete a parent shop' : 'Delete this shop'}
             >
               🗑️
-            </ExButton>
+            </SkyButton>
           </div>
         </div>
         <p className="text-sm mt-2 text-gray-600">{node.address}</p>
@@ -167,7 +167,7 @@ export default function ShopHierarchyManager() {
         <h2>Shop Nodes</h2>
 
         <div className="flex gap-2 items-center">
-          <ExCombobox
+          <SkyCombobox
   placeholder="Select active shop"
   emittedKey="value"
   style={{ minWidth: '200px' }}
@@ -186,14 +186,14 @@ export default function ShopHierarchyManager() {
     }
   }}
 />
-          <ExButton
+          <SkyButton
             onClick={() => {
               setNodeForm({ name: '', address: '', parentId: '' });
               nodeDialogRef.current?.show({ overlay: true });
             }}
           >
             + Add Node
-          </ExButton>
+          </SkyButton>
         </div>
       </div>
 
@@ -236,19 +236,19 @@ export default function ShopHierarchyManager() {
         ))}
       </div>
 
-      <ExDialog ref={nodeDialogRef} dialogPadding="10px" closeButton>
-        <ExForm onformSubmit={handleNodeSubmit} slot="dialog-form" formId="nodeForm">
-          <ExInput
+      <SkyDialog ref={nodeDialogRef} dialogPadding="10px" closeButton>
+        <SkyForm onformSubmit={handleNodeSubmit} slot="dialog-form" formId="nodeForm">
+          <SkyInput
             placeholder="Name"
             value={nodeForm.name}
             onvalueChanged={(e) => handleNodeChange('name', e.detail.value)}
           />
-          <ExInput
+          <SkyInput
             placeholder="Address"
             value={nodeForm.address}
             onvalueChanged={(e) => handleNodeChange('address', e.detail.value)}
           />
-          <ExCombobox
+          <SkyCombobox
             placeholder="Select parent"
             emittedKey="value"
             style={{ maxWidth: '100%' }}
@@ -264,11 +264,11 @@ export default function ShopHierarchyManager() {
             value={String(nodeForm.parentId || '')}
             onvalueChanged={(e) => handleNodeChange('parentId', e.detail.value)}
           />
-        </ExForm>
-        <ExButton formId="nodeForm" slot="custom-buttons">
+        </SkyForm>
+        <SkyButton formId="nodeForm" slot="custom-buttons">
           {editingNode ? 'Update' : 'Create'}
-        </ExButton>
-      </ExDialog>
+        </SkyButton>
+      </SkyDialog>
     </div>
   );
 }

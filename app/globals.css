@@ -1,45 +1,45 @@
 :root {
-  --ex-sz-2xs: 0.25rem;  /* 4px */
-  --ex-sz-xs:  0.5rem;   /* 8px */
-  --ex-sz-sm:  0.75rem;  /* 12px */
-  --ex-sz-md:  1rem;     /* 16px */
-  --ex-sz-lg:  1.5rem;   /* 24px */
-  --ex-sz-xl:  2rem;     /* 32px */
-  --ex-sz-2xl: 3rem;     /* 48px */
-  --ex-sz-3xl: 4rem;     /* 64px */
+  --sky-sz-2xs: 0.25rem;  /* 4px */
+  --sky-sz-xs:  0.5rem;   /* 8px */
+  --sky-sz-sm:  0.75rem;  /* 12px */
+  --sky-sz-md:  1rem;     /* 16px */
+  --sky-sz-lg:  1.5rem;   /* 24px */
+  --sky-sz-xl:  2rem;     /* 32px */
+  --sky-sz-2xl: 3rem;     /* 48px */
+  --sky-sz-3xl: 4rem;     /* 64px */
 
-  --ex-rd-xs: 2px;
-  --ex-rd-sm: 4px;
-  --ex-rd-md: 8px;
-  --ex-rd-lg: 12px;
-  --ex-rd-xl: 16px;
-  --ex-rd-full: 9999px;
+  --sky-rd-xs: 2px;
+  --sky-rd-sm: 4px;
+  --sky-rd-md: 8px;
+  --sky-rd-lg: 12px;
+  --sky-rd-xl: 16px;
+  --sky-rd-full: 9999px;
 
-  --ex-fs-xs: 0.75rem;   /* 12px */
-  --ex-fs-sm: 0.875rem;  /* 14px */
-  --ex-fs-md: 1rem;      /* 16px */
-  --ex-fs-lg: 1.125rem;  /* 18px */
-  --ex-fs-xl: 1.25rem;   /* 20px */
-  --ex-fs-2xl: 1.5rem;   /* 24px */
-  --ex-fs-3xl: 1.875rem; /* 30px */
-  --ex-fs-4xl: 2.25rem;  /* 36px */
+  --sky-fs-xs: 0.75rem;   /* 12px */
+  --sky-fs-sm: 0.875rem;  /* 14px */
+  --sky-fs-md: 1rem;      /* 16px */
+  --sky-fs-lg: 1.125rem;  /* 18px */
+  --sky-fs-xl: 1.25rem;   /* 20px */
+  --sky-fs-2xl: 1.5rem;   /* 24px */
+  --sky-fs-3xl: 1.875rem; /* 30px */
+  --sky-fs-4xl: 2.25rem;  /* 36px */
 
-  --ex-ic-sm: 1rem;     /* 16px */
-  --ex-ic-md: 1.5rem;   /* 24px */
-  --ex-ic-lg: 2rem;     /* 32px */
+  --sky-ic-sm: 1rem;     /* 16px */
+  --sky-ic-md: 1.5rem;   /* 24px */
+  --sky-ic-lg: 2rem;     /* 32px */
 
-  --ex-btn-h-sm: 2rem;  /* 32px */
-  --ex-btn-h-md: 2.5rem;/* 40px */
-  --ex-btn-h-lg: 3rem;  /* 48px */
+  --sky-btn-h-sm: 2rem;  /* 32px */
+  --sky-btn-h-md: 2.5rem;/* 40px */
+  --sky-btn-h-lg: 3rem;  /* 48px */
 
-  --ex-input-h: 2.5rem; /* default input height */
+  --sky-input-h: 2.5rem; /* default input height */
 
-  --ex-bp-xs: 360px;
-  --ex-bp-sm: 480px;
-  --ex-bp-md: 768px;
-  --ex-bp-lg: 1024px;
-  --ex-bp-xl: 1280px;
-  --ex-bp-2xl: 1440px;
+  --sky-bp-xs: 360px;
+  --sky-bp-sm: 480px;
+  --sky-bp-md: 768px;
+  --sky-bp-lg: 1024px;
+  --sky-bp-xl: 1280px;
+  --sky-bp-2xl: 1440px;
 }
 
 
@@ -62,21 +62,21 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   text-align: center;
-  line-height: var(--ex-sz-md);
-  margin-bottom: var(--ex-sz-xs)!important;
+  line-height: var(--sky-sz-md);
+  margin-bottom: var(--sky-sz-xs)!important;
 }
 
-h1 { font-size:var(--ex-fs-4xl);margin: unset; }
-h2 { font-size: var(--ex-fs-3xl);margin: unset; }
-h3 { font-size: var(--ex-fs-2xl);margin: unset; }
-h4 { font-size: var(--ex-fs-xl); margin: unset;}
-h5 { font-size: var(--ex-fs-lg);margin: unset; }
-h6 { font-size: var(--ex-fs-md);margin: unset; }
+h1 { font-size:var(--sky-fs-4xl);margin: unset; }
+h2 { font-size: var(--sky-fs-3xl);margin: unset; }
+h3 { font-size: var(--sky-fs-2xl);margin: unset; }
+h4 { font-size: var(--sky-fs-xl); margin: unset;}
+h5 { font-size: var(--sky-fs-lg);margin: unset; }
+h6 { font-size: var(--sky-fs-md);margin: unset; }
 
 /* === Paragraphs === */
 p {
-  font-size: var(--ex-fs-md);
-  margin-bottom: var(--ex-sz-md);
+  font-size: var(--sky-fs-md);
+  margin-bottom: var(--sky-sz-md);
 }
 
 main.homepage {

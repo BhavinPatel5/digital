@@ -1,6 +1,6 @@
 'use client';
 
-import { ExButton } from '@bhavinpatel57/element-x';
+import { SkyButton } from '@sky-ui/react';
 
 export default function HomePage() {
 
@@ -13,7 +13,7 @@ export default function HomePage() {
           <p className="subtext">
             A modern solution for inventory, billing, and business insights — all in one platform.
           </p>
-          <ExButton size="lg">Get Started</ExButton>
+          <SkyButton size="lg">Get Started</SkyButton>
         </div>
       </section>
 
@@ -57,7 +57,7 @@ export default function HomePage() {
         <div className="container">
           <h2 className="section-title">Start Your Journey</h2>
           <p>Sign up in under 2 minutes. No setup fee. Cancel anytime.</p>
-          <ExButton variant="default" size="lg">Create Free Account</ExButton>
+          <SkyButton variant="default" size="lg">Create Free Account</SkyButton>
         </div>
       </section>
 

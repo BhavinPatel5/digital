@@ -9,21 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@bhavinpatel57/element-x": "file:bhavin.tgz",
     "@react-oauth/google": "^0.12.2",
+    "@sky-ui/core": "file:sky-ui-core-0.0.1.tgz",
+    "@sky-ui/react": "file:sky-ui-react-0.0.1.tgz",
     "bcryptjs": "^3.0.2",
     "crypto": "^1.0.1",
     "google-auth-library": "^10.1.0",
-    "iconify-icon": "^3.0.0",
     "jsonwebtoken": "^9.0.2",
-    "lit": "^3.3.1",
     "mongoose": "^8.16.3",
-    "next": "15.4.1",
+    "next": "16.0.3",
     "nodemailer": "^7.0.5",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "typescript": "5.8.3"
+    "typescript": "5.9.3"
   }
 }
