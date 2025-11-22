@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export function generateAccessToken(user) {
-  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+  return jwt.sign({ id: user._id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
 }
 
 export function generateRefreshToken(user) {
@@ -15,7 +15,7 @@ export function verifyRefreshToken(token) {
 // ✅ Add this
 export function verifyAccessToken(token) {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
   } catch (err) {
     return null;
   }

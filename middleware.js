@@ -5,7 +5,7 @@ export function middleware(req) {
   const token = req.cookies.get('token')?.value;
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     return NextResponse.next();
   } catch (e) {
     return NextResponse.redirect(new URL('/login', req.url));

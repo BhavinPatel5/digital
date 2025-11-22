@@ -1,12 +1,10 @@
 .icon{
-    padding: 10px;
     border-radius: 50%;
 }
 
 .append{
     display: flex;
     align-items: center;
-    padding: 10px;
 }
 
 .user-info {

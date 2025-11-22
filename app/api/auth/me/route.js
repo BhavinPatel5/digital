@@ -29,8 +29,21 @@ export async function GET() {
         if (user) {
           const newAccessToken = generateAccessToken(user);
           
-          // Set new access token cookie
-         await cookies().set('accessToken', newAccessToken, {
+          // Set new access token cookie - FIXED: Use await with cookies()
+          const response = Response.json({ 
+            user: {
+              id: user._id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              isVerified: user.isVerified
+            }
+          });
+
+          // Set the cookie on the response
+          response.cookies.set({
+            name: 'accessToken',
+            value: newAccessToken,
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
@@ -38,13 +51,7 @@ export async function GET() {
             maxAge: 60 * 15 // 15 minutes
           });
 
-          return Response.json({ user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            isVerified: user.isVerified
-          }});
+          return response;
         }
       }
     }

@@ -53,7 +53,7 @@ export default function Header() {
     <>
       <SkyNavbar items={MenuItems} onrouteChange={handleRoute} activeRoute={activePath}>
         <div slot="prepend">
-<Image src={'/logo.png'} alt="Logo" width={40} height={40} className='icon'/>
+<Image src={'/logo.png'} alt="Logo" loading='eager' width={40} height={40} className='icon'/>
         </div>
         <div slot="append">
        <div className='append'>

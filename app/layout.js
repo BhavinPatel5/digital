@@ -12,13 +12,15 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
+  const clientId = process.env.GOOGLE_CLIENT_ID;
   return (
     <html lang="en">
       <body>
         <ThemeProvider>
           <AuthProvider>
             <ShopProvider>
-              <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
+              <GoogleOAuthProvider clientId={clientId}>
                 <NotificationProvider>
                   <main className="main-content">
                     <Header />

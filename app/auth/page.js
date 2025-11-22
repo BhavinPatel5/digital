@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   Required,
   StrongPassword,
@@ -24,10 +24,6 @@ import {
 export default function AuthPage() {
   const { setUser } = useAuth();
   const [mode, setMode] = useState("register");
-  const [formData, setFormData] = useState({
-    register: { name: "", email: "", password: "" },
-    login: { email: "", password: "" },
-  });
   const [loading, setLoading] = useState({
     login: false,
     register: false,
@@ -46,29 +42,14 @@ export default function AuthPage() {
     otp: "",
     newPassword: "",
     userId: "",
-    step: "email", // 'email' | 'otp' | 'reset' | 'set-password'
+    step: "email",
   });
 
   const [forgotOpen, setForgotOpen] = useState(false);
   const [otpOpen, setOtpOpen] = useState(false);
 
   const toggleMode = () => {
-    setFormData({
-      register: { name: "", email: "", password: "" },
-      login: { email: "", password: "" },
-    });
     setMode(mode === "login" ? "register" : "login");
-  };
-
-  const handleFormChange = (form, key, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [form]: { ...prev[form], [key]: value },
-    }));
-  };
-
-  const handleForgotChange = (key, value) => {
-    setForgotData((prev) => ({ ...prev, [key]: value }));
   };
 
   const callAuthApi = async (action, body) => {
@@ -76,7 +57,6 @@ export default function AuthPage() {
       let endpoint;
       let method = "POST";
 
-      // Determine endpoint based on action
       switch (action) {
         case "register":
           endpoint = "register/initiate";
@@ -175,24 +155,21 @@ export default function AuthPage() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (formValues) => {
     setLoading((prev) => ({ ...prev, login: true }));
     try {
       const response = await callAuthApi("login", {
-        email: formData.login.email,
-        password: formData.login.password,
+        email: formValues.email,
+        password: formValues.password,
       });
 
       if (response.action === "complete-verification") {
-        // First update the state
         setOtpData({
           userId: response.userId,
-          email: formData.login.email,
+          email: formValues.email,
           isPending: response.isPending,
         });
-
         setOtpOpen(true);
-
         notifyGlobal({
           title: "Verification Required",
           message: "Please verify your email to continue",
@@ -202,7 +179,7 @@ export default function AuthPage() {
         setUser(response.user);
         notifyGlobal({
           title: "Login Successful",
-          message: `Welcome ${response.user?.name || response.user?.email}`,
+          message: `Welcome back, ${response.user?.name || response.user?.email}!`,
           type: "success",
         });
       }
@@ -212,76 +189,34 @@ export default function AuthPage() {
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (formValues) => {
     setLoading((prev) => ({ ...prev, register: true }));
     const response = await callAuthApi("register", {
-      name: formData.register.name,
-      email: formData.register.email,
-      password: formData.register.password,
+      name: formValues.name,
+      email: formValues.email,
+      password: formValues.password,
     });
 
     if (response.userId) {
       setOtpData({
         userId: response.userId,
-        email: formData.register.email,
+        email: formValues.email,
         isPending: true,
       });
       setOtpOpen(true);
       notifyGlobal({
-        title: "Verification Sent",
-        message: "Please check your email for the verification code",
+        title: "Almost there!",
+        message: "We've sent a verification code to your email",
         type: "success",
       });
     }
     setLoading((prev) => ({ ...prev, register: false }));
   };
 
-  const handleOtpVerify = async () => {
-    setLoading((prev) => ({ ...prev, otp: true }));
-    let response;
-
-    if (otpData.isPending) {
-      response = await callAuthApi("register-verify", {
-        userId: otpData.userId,
-        otp: otpValue,
-        isPending: true,
-      });
-    } else {
-      response = await callAuthApi("verify", {
-        userId: otpData.userId,
-        otp: otpValue,
-      });
-    }
-
-    if (!response.error) {
-      notifyGlobal({
-        title: "Verified",
-        message: "Email verification complete!",
-        type: "success",
-      });
-
-      setOtpOpen(false);
-      setOtpValue("");
-
-      if (mode === "login") {
-        await handleLogin();
-      } else {
-        setMode("login");
-      }
-    } else {
-      notifyGlobal({
-        title: "Verification Failed",
-        message: response.error || "Invalid OTP",
-        type: "alert",
-      });
-    }
-    setLoading((prev) => ({ ...prev, otp: false }));
-  };
-
-  const handleForgotPassword = async () => {
+  const handleForgotPassword = async (email) => {
     setLoading((prev) => ({ ...prev, forgot: true }));
     const response = await callAuthApi("forgot-initiate", {
-      email: forgotData.email,
+      email: email,
     });
 
     if (response.action === "verify-otp-set-password") {
@@ -292,7 +227,7 @@ export default function AuthPage() {
         email: response.email,
       }));
       notifyGlobal({
-        title: "Verify OTP",
+        title: "Security Check",
         message: response.message,
         type: "info",
       });
@@ -304,7 +239,7 @@ export default function AuthPage() {
         email: response.email,
       }));
       notifyGlobal({
-        title: "OTP Sent",
+        title: "Reset Code Sent",
         message: response.message,
         type: "info",
       });
@@ -312,23 +247,60 @@ export default function AuthPage() {
     setLoading((prev) => ({ ...prev, forgot: false }));
   };
 
-  const handleForgotOtpVerify = async () => {
+  const handleOtpVerify = async (formValues) => {
+    setLoading((prev) => ({ ...prev, otp: true }));
+    let response;
+
+    if (otpData.isPending) {
+      response = await callAuthApi("register-verify", {
+        userId: otpData.userId,
+        otp: formValues.otp,
+        isPending: true,
+      });
+    } else {
+      response = await callAuthApi("verify", {
+        userId: otpData.userId,
+        otp: formValues.otp,
+      });
+    }
+
+    if (!response.error) {
+      notifyGlobal({
+        title: "Success!",
+        message: "Your email has been verified successfully",
+        type: "success",
+      });
+
+      setOtpOpen(false);
+      setOtpValue("");
+      setMode("login");
+    } else {
+      notifyGlobal({
+        title: "Verification Failed",
+        message: response.error || "The code you entered is incorrect",
+        type: "alert",
+      });
+    }
+    setLoading((prev) => ({ ...prev, otp: false }));
+  };
+
+  const handleForgotOtpVerify = async (formValues) => {
     setLoading((prev) => ({ ...prev, otp: true }));
     const response = await callAuthApi("forgot-verify", {
       userId: forgotData.userId,
-      otp: forgotData.otp,
+      otp: formValues.otp,
     });
 
     if (!response.error) {
       setForgotData((prev) => ({ ...prev, step: "reset" }));
       notifyGlobal({
-        title: "OTP Verified",
-        message: "You can now reset your password",
+        title: "Verified!",
+        message: "You can now create your new password",
         type: "success",
       });
     } else {
       notifyGlobal({
-        title: "Verification Failed",
+        title: "Invalid Code",
         message: response.error,
         type: "alert",
       });
@@ -336,18 +308,18 @@ export default function AuthPage() {
     setLoading((prev) => ({ ...prev, otp: false }));
   };
 
-  const handlePasswordReset = async () => {
+  const handlePasswordReset = async (password) => {
     setLoading((prev) => ({ ...prev, reset: true }));
     const response = await callAuthApi("forgot-reset", {
       userId: forgotData.userId,
-      password: forgotData.newPassword,
+      password: password,
       otp: forgotData.otp,
     });
 
     if (!response.error) {
       notifyGlobal({
-        title: "Password Reset",
-        message: response.message || "Password reset successfully",
+        title: "Password Updated!",
+        message: response.message || "Your password has been reset successfully",
         type: "success",
       });
       setForgotOpen(false);
@@ -374,7 +346,7 @@ export default function AuthPage() {
     if (!token) {
       notifyGlobal({
         title: "Error",
-        message: "No Google token received.",
+        message: "Unable to connect with Google. Please try again.",
         type: "alert",
       });
       return;
@@ -389,10 +361,8 @@ export default function AuthPage() {
     if (response.user) {
       setUser(response.user);
       notifyGlobal({
-        title: "Welcome",
-        message: `Hello ${
-          response.user?.name || response.user?.email || "User"
-        }`,
+        title: "Welcome!",
+        message: `Great to see you, ${response.user?.name || response.user?.email || "there"}!`,
         type: "success",
       });
     } else if (response.action === "set-password") {
@@ -403,7 +373,7 @@ export default function AuthPage() {
       }));
       setForgotOpen(true);
       notifyGlobal({
-        title: "Set Password",
+        title: "One Last Step",
         message: response.message,
         type: "info",
       });
@@ -441,14 +411,14 @@ export default function AuthPage() {
 
     if (!response.error) {
       notifyGlobal({
-        title: "OTP Resent",
-        message: "A new OTP has been sent to your email",
+        title: "New Code Sent",
+        message: "Check your email for the new verification code",
         type: "success",
       });
     } else {
       notifyGlobal({
         title: "Error",
-        message: response.error || "Failed to resend OTP",
+        message: response.error || "Failed to resend code",
         type: "alert",
       });
     }
@@ -461,8 +431,6 @@ export default function AuthPage() {
       <SkyDialog open={forgotOpen} dialogPadding="10px">
         {forgotData.step === "email" && (
           <ForgotPasswordForm
-            email={forgotData.email}
-            onChange={(val) => handleForgotChange("email", val)}
             onSubmit={handleForgotPassword}
             loading={loading.forgot}
           />
@@ -471,13 +439,12 @@ export default function AuthPage() {
         {forgotData.step === "otp" && (
           <OtpForm
             userId={forgotData.userId}
-            otp={forgotData.otp}
-            onChange={(val) => handleForgotChange("otp", val)}
             onVerify={handleForgotOtpVerify}
             onResend={handleResendOtp}
             loading={loading.otp}
             formId="forgotOtpForm"
             email={forgotData.email}
+            isForgot={true}
           />
         )}
 
@@ -486,16 +453,14 @@ export default function AuthPage() {
           <ResetPasswordForm
             title={
               forgotData.step === "set-password"
-                ? "Set Password"
-                : "Reset Password"
+                ? "Create Your Password"
+                : "Create New Password"
             }
             subtitle={
               forgotData.step === "set-password"
-                ? "You're almost done! Just set your new password."
-                : "Set your new password"
+                ? "Choose a secure password to protect your account"
+                : "Choose a strong, memorable password"
             }
-            data={{ password: forgotData.newPassword }}
-            onChange={(val) => handleForgotChange("newPassword", val)}
             onSubmit={handlePasswordReset}
             loading={loading.reset}
           />
@@ -506,8 +471,6 @@ export default function AuthPage() {
       <SkyDialog open={otpOpen} dialogPadding="10px">
         <OtpForm
           userId={otpData.userId}
-          otp={otpValue}
-          onChange={setOtpValue}
           onVerify={handleOtpVerify}
           onResend={handleResendOtp}
           loading={loading.otp}
@@ -517,69 +480,64 @@ export default function AuthPage() {
         />
       </SkyDialog>
 
-      <div className={`auth-wrapper ${mode}`}>
-        <div className="auth-slide login-slot">
-          <div className="auth-inner">
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="logo-section">
+            <div className="app-logo">🔐</div>
+            <h1>Welcome to SkyApp</h1>
+            <p className="app-tagline">
+              {mode === "login" 
+                ? "Sign in to continue your journey" 
+                : "Join us and get started today"}
+            </p>
+          </div>
+        </div>
+
+        <div className="auth-content">
+          {mode === "login" ? (
             <LoginForm
-              data={formData.login}
-              onChange={(key, val) => handleFormChange("login", key, val)}
               onSubmit={handleLogin}
               loading={loading.login}
               onForgot={() => setForgotOpen(true)}
               onGoogleLogin={handleGoogleLogin}
+              onSwitchMode={toggleMode}
             />
-          </div>
-        </div>
-
-        <div className="auth-slide register-slot">
-          <div className="auth-inner">
+          ) : (
             <RegisterForm
-              data={formData.register}
-              onChange={(key, val) => handleFormChange("register", key, val)}
               onSubmit={handleRegister}
               loading={loading.register}
               onEmailBlur={handleEmailBlur}
+              onSwitchMode={toggleMode}
             />
-          </div>
+          )}
         </div>
 
-        {(mode === "login" || mode === "register") && (
-          <div className="auth-overlay">
-            <div className="auth-info">
-              <h2>{mode === "login" ? "New Here?" : "Welcome Back"}</h2>
-              <h5>
-                {mode === "login"
-                  ? "Sign up and get started"
-                  : "Already have an account?"}
-              </h5>
-              <button className="toggle-btn" onClick={toggleMode}>
-                {mode === "login" ? "Register" : "Login"}
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="auth-footer">
+          <p>Secure • Reliable • User-Friendly</p>
+        </div>
       </div>
     </div>
   );
 }
 
 function LoginForm({
-  data,
-  onChange,
   onSubmit,
   loading,
   onForgot,
   onGoogleLogin,
+  onSwitchMode,
 }) {
   const fields = [
     {
-      key: "email",
-      placeholder: "you@example.com",
+      name: "email",
+      placeholder: "Enter your email or phone",
+      label: "Email or Phone",
       validations: [Required, ValidEmailOrPhone],
     },
     {
-      key: "password",
-      placeholder: "Password",
+      name: "password",
+      placeholder: "Enter your password",
+      label: "Password",
       type: "password",
       validations: [Required],
     },
@@ -588,173 +546,232 @@ function LoginForm({
   return (
     <div className="form-container">
       <div className="form-header">
-        <h2>Login</h2>
-        <h5>Welcome back! Please login to continue</h5>
+        <h2>Welcome Back</h2>
+        <p className="form-subtitle">Sign in to access your account</p>
       </div>
-      <SkyDivider />
-      <SkyForm
-        resetOnSubmit
-        formId="loginForm"
-        onformSubmit={(e) => {
-          e.preventDefault();
-          if (e.detail.success) onSubmit();
-        }}
-      >
-        <div className="auth-fields">
-          {fields.map(({ key, placeholder, validations, type = "text" }) => (
-            <SkyInput
-              key={key}
-              type={type}
-              placeholder={placeholder}
-              required
-              value={data[key]}
-              validations={validations}
-              onvalueChanged={(e) => onChange(key, e.detail.value)}
-            />
-          ))}
-        </div>
-      </SkyForm>
-      <p
-        className="forgot-link"
-        onClick={onForgot}
-        style={{ cursor: "pointer", marginTop: "8px" }}
-      >
-        Forgot Password?
-      </p>
-      <SkyButton
-        variant="primary"
-        type="submit"
-        formId="loginForm"
-        disabled={loading}
-        loading={loading}
-      >
-        Login
-      </SkyButton>
 
-      <div className="social-login">
+      <div className="social-login-section">
         <GoogleLogin
           onSuccess={onGoogleLogin}
           onError={() => {
             notifyGlobal({
-              title: "Google Login Failed",
-              message: "Unable to login with Google",
+              title: "Google Sign-In Failed",
+              message: "Please try another method or try again later",
               type: "alert",
             });
           }}
+          theme="filled_blue"
+          size="large"
+          text="signin_with"
         />
+      </div>
+
+      <div className="divider-section">
+        <span className="divider-text">or continue with email</span>
+      </div>
+
+      <SkyForm
+        resetOnSubmit
+        formId="loginForm"
+        onFormSubmit={(e) => {
+          if (e.detail.success) {
+            onSubmit(e.detail.values);
+          }
+        }}
+      >
+        <div className="auth-fields">
+          {fields.map(({ name, placeholder, validations, type = "text", label }) => (
+            <div key={name} className="field-group">
+              <SkyInput
+                name={name}
+                type={type}
+                label={label}
+                placeholder={placeholder}
+                required
+                validations={validations}
+              />
+            </div>
+          ))}
+        </div>
+      </SkyForm>
+
+      <div className="form-actions">
+        <div className="remember-forgot">
+          <button
+            type="button"
+            className="forgot-link"
+            onClick={onForgot}
+          >
+            Forgot your password?
+          </button>
+        </div>
+
+        <SkyButton
+          variant="primary"
+          type="submit"
+          formId="loginForm"
+          disabled={loading}
+          loading={loading}
+          className="submit-button"
+        >
+          Sign In
+        </SkyButton>
+      </div>
+
+      <div className="auth-switch">
+        <p>
+          Don't have an account?{" "}
+          <button className="switch-link" onClick={onSwitchMode}>
+            Create one here
+          </button>
+        </p>
       </div>
     </div>
   );
 }
 
-function RegisterForm({ data, onChange, onSubmit, loading, onEmailBlur }) {
+function RegisterForm({ onSubmit, loading, onEmailBlur, onSwitchMode }) {
   const fields = [
     {
-      key: "name",
-      placeholder: "Full Name",
+      name: "name",
+      placeholder: "Enter your full name",
+      label: "Full Name",
       validations: [Required, ValidName],
+      helpText: "This is how you'll appear on the platform"
     },
     {
-      key: "email",
-      placeholder: "you@example.com",
+      name: "email",
+      placeholder: "Enter your email address",
+      label: "Email Address",
       validations: [Required, ValidEmail],
       onBlur: onEmailBlur,
+      helpText: "We'll send a verification code to this email"
     },
     {
-      key: "password",
-      placeholder: "Password",
+      name: "password",
+      placeholder: "Create a strong password",
+      label: "Password",
       type: "password",
       validations: [Required, StrongPassword],
+      helpText: "Use at least 8 characters with letters, numbers, and symbols"
     },
   ];
 
   return (
     <div className="form-container">
       <div className="form-header">
-        <h2>Register</h2>
-        <h5>Create your account below</h5>
+        <h2>Join Our Community</h2>
+        <p className="form-subtitle">Create your account in just a few steps</p>
       </div>
-      <SkyDivider />
+
       <SkyForm
         formId="registerForm"
         resetOnSubmit
-        onformSubmit={(e) => {
-          if (e.detail.success) onSubmit();
+        onFormSubmit={(e) => {
+          if (e.detail.success) {
+            onSubmit(e.detail.values);
+          }
         }}
       >
         <div className="auth-fields">
           {fields.map(
-            ({ key, placeholder, validations, type = "text", onBlur }) => (
-              <SkyInput
-                key={key}
-                type={type}
-                placeholder={placeholder}
-                required
-                value={data[key]}
-                validations={validations}
-                onvalueChanged={(e) => onChange(key, e.detail.value)}
-                onblur={key === "email" ? () => onBlur(data.email) : undefined}
-              />
+            ({ name, placeholder, validations, type = "text", onBlur, label, helpText }) => (
+              <div key={name} className="field-group">
+                <SkyInput
+                  name={name}
+                  type={type}
+                  label={label}
+                  placeholder={placeholder}
+                  required
+                  validations={validations}
+                  onblur={name === "email" ? (e) => onBlur(e.target.value) : undefined}
+                />
+              </div>
             )
           )}
         </div>
       </SkyForm>
-      <SkyButton
-        variant="primary"
-        type="submit"
-        formId="registerForm"
-        disabled={loading}
-        loading={loading}
-      >
-        Register
-      </SkyButton>
+
+      <div className="form-actions">
+        <SkyButton
+          variant="primary"
+          type="submit"
+          formId="registerForm"
+          disabled={loading}
+          loading={loading}
+          className="submit-button"
+        >
+          Create Account
+        </SkyButton>
+      </div>
+
+      <div className="terms-notice">
+        <p>
+          By creating an account, you agree to our{" "}
+          <button className="inline-link">Terms of Service</button> and{" "}
+          <button className="inline-link">Privacy Policy</button>
+        </p>
+      </div>
+
+      <div className="auth-switch">
+        <p>
+          Already have an account?{" "}
+          <button className="switch-link" onClick={onSwitchMode}>
+            Sign in here
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
 
-function ForgotPasswordForm({ email, onChange, onSubmit, loading }) {
+function ForgotPasswordForm({ onSubmit, loading }) {
   return (
     <>
       <div slot="header">
-        <div className="dialog-title">Forgot Password</div>
+        <div className="dialog-title">Reset Your Password</div>
         <div className="dialog-subtitle">
-          Enter your email to receive reset link
+          Enter your email address and we'll send you a code to reset your password
         </div>
       </div>
       <SkyForm
         formId="forgotForm"
         resetOnSubmit
         slot="body"
-        onformSubmit={(e) => {
-          if (e.detail.success) onSubmit();
+        onFormSubmit={(e) => {
+          if (e.detail.success) {
+            onSubmit(e.detail.values.email);
+          }
         }}
       >
-        <SkyInput
-          type="email"
-          placeholder="you@example.com"
-          required
-          value={email}
-          validations={[Required, ValidEmail]}
-          onvalueChanged={(e) => onChange(e.detail.value)}
-        />
+        <div className="field-group">
+          <SkyInput
+            name="email"
+            type="email"
+            label="Email Address"
+            placeholder="your.email@example.com"
+            required
+            validations={[Required, ValidEmail]}
+          />
+          <div className="help-text">We'll send a 6-digit verification code</div>
+        </div>
       </SkyForm>
       <SkyButton
-        variant="transparent"
+        variant="primary"
         slot="footer"
         type="submit"
         formId="forgotForm"
         loading={loading}
         disabled={loading}
+        className="dialog-button"
       >
-        Send Reset Link
+        Send Reset Code
       </SkyButton>
     </>
   );
 }
 
 function ResetPasswordForm({
-  data,
-  onChange,
   onSubmit,
   loading,
   title,
@@ -770,28 +787,34 @@ function ResetPasswordForm({
         formId="resetForm"
         resetOnSubmit
         slot="body"
-        onformSubmit={(e) => {
-          if (e.detail.success) onSubmit();
+        onFormSubmit={(e) => {
+          if (e.detail.success) {
+            onSubmit(e.detail.values.password);
+          }
         }}
       >
-        <SkyInput
-          type="password"
-          placeholder="New Password"
-          required
-          value={data.password}
-          validations={[Required, StrongPassword]}
-          onvalueChanged={(e) => onChange(e.detail.value)}
-        />
+        <div className="field-group">
+          <SkyInput
+            name="password"
+            type="password"
+            label="New Password"
+            placeholder="Enter your new password"
+            required
+            validations={[Required, StrongPassword]}
+          />
+          
+        </div>
       </SkyForm>
       <SkyButton
-        variant="transparent"
+        variant="primary"
         slot="footer"
         type="submit"
         formId="resetForm"
         loading={loading}
         disabled={loading}
+        className="dialog-button"
       >
-        {title === "Set Password" ? "Set Password" : "Reset Password"}
+        {title === "Create Your Password" ? "Set Password" : "Update Password"}
       </SkyButton>
     </>
   );
@@ -799,8 +822,6 @@ function ResetPasswordForm({
 
 function OtpForm({
   userId,
-  otp,
-  onChange,
   onVerify,
   onResend,
   loading,
@@ -824,46 +845,53 @@ function OtpForm({
     <>
       <div slot="header">
         <div className="dialog-title">
-          {isForgot ? "Password Reset" : "Complete Verification"}
+          {isForgot ? "Verify Your Identity" : "Verify Your Email"}
         </div>
         <div className="dialog-subtitle">
-          Enter OTP sent to {email}
-          {isRegistration && " to complete registration"}
+          We've sent a 6-digit code to <strong>{email}</strong>
+          {isRegistration && " to complete your registration"}
+          {isForgot && " to reset your password"}
         </div>
       </div>
       <SkyForm
         formId={formId}
-        onformSubmit={(e) => {
-          if (e.detail.success) onVerify();
+        onFormSubmit={(e) => {
+          if (e.detail.success) {
+            onVerify(e.detail.values);
+          }
         }}
         slot="body"
       >
-        <SkyOtp
-          value={otp}
-          onvalueChanged={(e) => onChange(e.detail.otp)}
-          required
-          length={6}
-        />
+        <div className="field-group">
+          <label className="field-label">Verification Code</label>
+          <SkyOtp
+            name="otp"
+            required
+            length={6}
+            className="otp-input"
+          />
+          <div className="help-text">Enter the code you received in your email</div>
+        </div>
       </SkyForm>
       <div slot="footer" className="otp-buttons">
         <SkyButton
           type="submit"
-          variant="transparent"
+          variant="primary"
           formId={formId}
           loading={loading}
           disabled={loading}
+          className="verify-button"
         >
-          Verify
+          Verify Code
         </SkyButton>
-        <SkyButton
-          variant="transparent"
-          color="var(--sky-success-primary)"
+        <button
+          type="button"
+          className="resend-link"
           onClick={handleResend}
-          loading={resendLoading}
           disabled={resendLoading}
         >
-          Resend OTP
-        </SkyButton>
+          {resendLoading ? "Sending..." : "Didn't receive code? Resend"}
+        </button>
       </div>
     </>
   );
